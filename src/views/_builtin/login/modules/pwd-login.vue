@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive } from 'vue';
 import { $t } from '@/locales';
-import { loginModuleRecord } from '@/constants/app';
 import { useRouterPush } from '@/hooks/common/router';
 import { useFormRules, useNaiveForm } from '@/hooks/common/form';
 import { useAuthStore } from '@/store/modules/auth';
@@ -20,7 +19,7 @@ interface FormModel {
 }
 
 const model: FormModel = reactive({
-  userName: 'Soybean',
+  userName: 'Admin',
   password: '123456'
 });
 
@@ -39,39 +38,9 @@ async function handleSubmit() {
   await authStore.login(model.userName, model.password);
 }
 
-type AccountKey = 'super' | 'admin' | 'user';
-
-interface Account {
-  key: AccountKey;
-  label: string;
-  userName: string;
-  password: string;
-}
-
-const accounts = computed<Account[]>(() => [
-  {
-    key: 'super',
-    label: $t('page.login.pwdLogin.superAdmin'),
-    userName: 'Super',
-    password: '123456'
-  },
-  {
-    key: 'admin',
-    label: $t('page.login.pwdLogin.admin'),
-    userName: 'Admin',
-    password: '123456'
-  },
-  {
-    key: 'user',
-    label: $t('page.login.pwdLogin.user'),
-    userName: 'User',
-    password: '123456'
-  }
-]);
-
-async function handleAccountLogin(account: Account) {
-  await authStore.login(account.userName, account.password);
-}
+// async function handleAccountLogin(account: Account) {
+//   await authStore.login(account.userName, account.password);
+// }
 </script>
 
 <template>
@@ -97,20 +66,6 @@ async function handleAccountLogin(account: Account) {
       <NButton type="primary" size="large" round block :loading="authStore.loginLoading" @click="handleSubmit">
         {{ $t('common.confirm') }}
       </NButton>
-      <div class="flex-y-center justify-between gap-12px">
-        <NButton class="flex-1" block @click="toggleLoginModule('code-login')">
-          {{ $t(loginModuleRecord['code-login']) }}
-        </NButton>
-        <NButton class="flex-1" block @click="toggleLoginModule('register')">
-          {{ $t(loginModuleRecord.register) }}
-        </NButton>
-      </div>
-      <NDivider class="text-14px text-#666 !m-0">{{ $t('page.login.pwdLogin.otherAccountLogin') }}</NDivider>
-      <div class="flex-center gap-12px">
-        <NButton v-for="item in accounts" :key="item.key" type="primary" @click="handleAccountLogin(item)">
-          {{ item.label }}
-        </NButton>
-      </div>
     </NSpace>
   </NForm>
 </template>
