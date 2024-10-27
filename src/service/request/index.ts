@@ -123,9 +123,9 @@ export const request = createFlatRequest<App.Service.Response, RequestInstanceSt
   }
 );
 
-export const demoRequest = createRequest<App.Service.DemoResponse>(
+export const normalRequest = createRequest<App.Service.DemoResponse>(
   {
-    baseURL: otherBaseURL.demo
+    baseURL: otherBaseURL.chat
   },
   {
     async onRequest(config) {
@@ -133,31 +133,32 @@ export const demoRequest = createRequest<App.Service.DemoResponse>(
 
       // set token
       const token = localStg.get('token');
-      const Authorization = token ? `Bearer ${token}` : null;
-      Object.assign(headers, { Authorization });
+      Object.assign(headers, {
+        accountToken: token
+      });
 
       return config;
     },
     isBackendSuccess(response) {
       // when the backend response code is "200", it means the request is success
       // you can change this logic by yourself
-      return response.data.status === '200';
+      return response.data.code === 200;
     },
     async onBackendFail(_response) {
       // when the backend response code is not "200", it means the request is fail
       // for example: the token is expired, refresh token and retry request
+      return null
     },
     transformBackendResponse(response) {
-      return response.data.result;
+      return response.data;
     },
     onError(error) {
       // when the request is fail, you can show error message
-
       let message = error.message;
 
       // show backend error message
       if (error.code === BACKEND_ERROR_CODE) {
-        message = error.response?.data?.message || message;
+        message = error.response?.data?.msg || message;
       }
 
       window.$message?.error(message);

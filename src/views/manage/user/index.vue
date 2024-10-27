@@ -1,6 +1,6 @@
 <script setup lang="tsx">
 import { NButton, NPopconfirm, NTag } from 'naive-ui';
-import { fetchGetUserList } from '@/service/api';
+import { fetchGetUserList, fetchUpdateUserStatus, fetchDeleteUserById } from '@/service/api';
 import { $t } from '@/locales';
 import { useAppStore } from '@/store/modules/app';
 import { enableStatusRecord, userGenderRecord } from '@/constants/business';
@@ -28,12 +28,6 @@ const {
     size: 10,
     // if you want to use the searchParams in Form, you need to define the following properties, and the value is null
     // the value can not be undefined, otherwise the property in Form will not be reactive
-    status: null,
-    userName: null,
-    userGender: null,
-    nickName: null,
-    userPhone: null,
-    userEmail: null
   },
   columns: () => [
     {
@@ -48,48 +42,48 @@ const {
       width: 64
     },
     {
-      key: 'userName',
+      key: 'name',
       title: $t('page.manage.user.userName'),
       align: 'center',
       minWidth: 100
     },
-    {
-      key: 'userGender',
-      title: $t('page.manage.user.userGender'),
-      align: 'center',
-      width: 100,
-      render: row => {
-        if (row.userGender === null) {
-          return null;
-        }
+    // {
+    //   key: 'userGender',
+    //   title: $t('page.manage.user.userGender'),
+    //   align: 'center',
+    //   width: 100,
+    //   render: row => {
+    //     if (row.userGender === null) {
+    //       return null;
+    //     }
 
-        const tagMap: Record<Api.SystemManage.UserGender, NaiveUI.ThemeColor> = {
-          1: 'primary',
-          2: 'error'
-        };
+    //     const tagMap: Record<Api.SystemManage.UserGender, NaiveUI.ThemeColor> = {
+    //       1: 'primary',
+    //       2: 'error'
+    //     };
 
-        const label = $t(userGenderRecord[row.userGender]);
+    //     const label = $t(userGenderRecord[row.userGender]);
 
-        return <NTag type={tagMap[row.userGender]}>{label}</NTag>;
-      }
-    },
+    //     return <NTag type={tagMap[row.userGender]}>{label}</NTag>;
+    //   }
+    // },
     {
-      key: 'nickName',
-      title: $t('page.manage.user.nickName'),
-      align: 'center',
-      minWidth: 100
-    },
-    {
-      key: 'userPhone',
+      key: 'phone',
       title: $t('page.manage.user.userPhone'),
       align: 'center',
-      width: 120
+      minWidth: 120
     },
     {
-      key: 'userEmail',
+      key: 'email',
       title: $t('page.manage.user.userEmail'),
       align: 'center',
       minWidth: 200
+    },
+    {
+      key: 'source',
+      title: '用户来源',
+      align: 'center',
+      width: 120
     },
     {
       key: 'status',
@@ -103,7 +97,8 @@ const {
 
         const tagMap: Record<Api.Common.EnableStatus, NaiveUI.ThemeColor> = {
           1: 'success',
-          2: 'warning'
+          2: 'warning',
+          3: 'info'
         };
 
         const label = $t(enableStatusRecord[row.status]);
@@ -115,17 +110,31 @@ const {
       key: 'operate',
       title: $t('common.operate'),
       align: 'center',
-      width: 130,
+      width: 180,
       render: row => (
         <div class="flex-center gap-8px">
-          <NButton type="primary" ghost size="small" onClick={() => edit(row.id)}>
+          <NButton type="primary" ghost disabled={row.name === 'admin'} size="small" onClick={() => edit(row.id)} >
             {$t('common.edit')}
           </NButton>
+          <NPopconfirm
+            onPositiveClick={() => toggleStatus(row)}
+          >
+            {{
+              default: `确认要${row.status === 1 ? '禁用' : '启用'}${row.name}账号吗？`,
+              trigger() {
+                return (
+                  <NButton type="warning" ghost disabled={row.name === 'admin'} size="small">
+                    {row.status === 1 ? '禁用' : '启用'}
+                  </NButton>
+                )
+              }
+            }}
+          </NPopconfirm>
           <NPopconfirm onPositiveClick={() => handleDelete(row.id)}>
             {{
               default: () => $t('common.confirmDelete'),
               trigger: () => (
-                <NButton type="error" ghost size="small">
+                <NButton type="error" ghost disabled={row.name === 'admin'} size="small">
                   {$t('common.delete')}
                 </NButton>
               )
@@ -156,15 +165,26 @@ async function handleBatchDelete() {
   onBatchDeleted();
 }
 
-function handleDelete(id: number) {
-  // request
-  console.log(id);
-
-  onDeleted();
+async function handleDelete(id: number) {
+  try {
+    await fetchDeleteUserById(id)
+    onDeleted();
+  }catch(error){}
 }
 
 function edit(id: number) {
   handleEdit(id);
+}
+
+async function toggleStatus(row: any) {
+  console.log(row)
+  try {
+    await fetchUpdateUserStatus({
+      id: row.id,
+      status: row.status === 1 ? 2 : 1
+    })
+    getData()
+  }catch(error){}
 }
 </script>
 
@@ -172,7 +192,7 @@ function edit(id: number) {
   <div class="min-h-500px flex-col-stretch gap-16px overflow-hidden lt-sm:overflow-auto">
     <UserSearch v-model:model="searchParams" @reset="resetSearchParams" @search="getDataByPage" />
     <NCard :title="$t('page.manage.user.title')" :bordered="false" size="small" class="sm:flex-1-hidden card-wrapper">
-      <template #header-extra>
+      <!-- <template #header-extra>
         <TableHeaderOperation
           v-model:columns="columnChecks"
           :disabled-delete="checkedRowKeys.length === 0"
@@ -181,7 +201,7 @@ function edit(id: number) {
           @delete="handleBatchDelete"
           @refresh="getData"
         />
-      </template>
+      </template> -->
       <NDataTable
         v-model:checked-row-keys="checkedRowKeys"
         :columns="columns"

@@ -26,10 +26,11 @@ declare namespace Api {
     /**
      * enable status
      *
-     * - "1": enabled
-     * - "2": disabled
+     * - 1: enabled
+     * - 2: disabled
+     * - 3: 注销
      */
-    type EnableStatus = '1' | '2';
+    type EnableStatus = 1 | 2 | 3;
 
     /** common record */
     type CommonRecord<T = any> = {
@@ -54,16 +55,21 @@ declare namespace Api {
    * backend api module: "auth"
    */
   namespace Auth {
-    interface LoginToken {
-      token: string;
-      refreshToken: string;
+    interface LoginReponse {
+      accountToken: string;
+      email: string;
+      id: number;
+      imgUrl?: string | null;
+      name: string;
+      password?: string | null;
+      phone?: string | null
     }
 
     interface UserInfo {
-      userId: string;
-      userName: string;
-      roles: string[];
-      buttons: string[];
+      id: string;
+      name: string;
+      roles?: string[];
+      buttons?: string[];
     }
   }
 
@@ -124,23 +130,16 @@ declare namespace Api {
 
     /** user */
     type User = Common.CommonRecord<{
-      /** user name */
-      userName: string;
-      /** user gender */
-      userGender: UserGender | null;
-      /** user nick name */
-      nickName: string;
-      /** user phone */
-      userPhone: string;
-      /** user email */
-      userEmail: string;
-      /** user role code collection */
-      userRoles: string[];
+      name: string;
+      phone: string;
+      source: string;
+      loginTime: string;
+      email: string;
     }>;
 
     /** user search params */
     type UserSearchParams = CommonType.RecordNullable<
-      Pick<Api.SystemManage.User, 'userName' | 'userGender' | 'nickName' | 'userPhone' | 'userEmail' | 'status'> &
+    Pick<Api.SystemManage.User, 'name' | 'phone' | 'status' | 'email'> &
         CommonSearchParams
     >;
 

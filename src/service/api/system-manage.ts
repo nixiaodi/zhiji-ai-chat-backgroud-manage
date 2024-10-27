@@ -1,4 +1,4 @@
-import { request } from '../request';
+import { request, normalRequest } from '../request';
 
 /** get role list */
 export function fetchGetRoleList(params?: Api.SystemManage.RoleSearchParams) {
@@ -23,10 +23,39 @@ export function fetchGetAllRoles() {
 
 /** get user list */
 export function fetchGetUserList(params?: Api.SystemManage.UserSearchParams) {
-  return request<Api.SystemManage.UserList>({
-    url: '/systemManage/getUserList',
+  return normalRequest<Api.SystemManage.UserList>({
+    url: '/manage/user/pageList',
     method: 'get',
     params
+  });
+}
+
+/** update user */
+export function fetchUpdateUser(data: Api.SystemManage.UserSearchParams) {
+  return normalRequest({
+    url: '/manage/user/update',
+    method: 'post',
+    data
+  });
+}
+
+/** update user status */
+export function fetchUpdateUserStatus(data: { id: string, status: Api.Common.EnableStatus }) {
+  return normalRequest({
+    url: '/manage/user/status',
+    method: 'post',
+    data
+  });
+}
+
+/** delete user */
+export function fetchDeleteUserById(id: number) {
+  return normalRequest({
+    url: '/manage/user/delete',
+    method: 'get',
+    params: {
+      id
+    }
   });
 }
 

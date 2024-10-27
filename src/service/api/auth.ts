@@ -1,4 +1,4 @@
-import { request } from '../request';
+import { request, normalRequest } from '../request';
 
 /**
  * Login
@@ -7,11 +7,11 @@ import { request } from '../request';
  * @param password Password
  */
 export function fetchLogin(userName: string, password: string) {
-  return request<Api.Auth.LoginToken>({
-    url: '/auth/login',
+  return normalRequest({
+    url: '/admin/login',
     method: 'post',
     data: {
-      userName,
+      name: userName,
       password
     }
   });
@@ -19,7 +19,7 @@ export function fetchLogin(userName: string, password: string) {
 
 /** Get user info */
 export function fetchGetUserInfo() {
-  return request<Api.Auth.UserInfo>({ url: '/auth/getUserInfo' });
+  return normalRequest({ url: '/admin/adminByToken' });
 }
 
 /**
@@ -28,7 +28,7 @@ export function fetchGetUserInfo() {
  * @param refreshToken Refresh token
  */
 export function fetchRefreshToken(refreshToken: string) {
-  return request<Api.Auth.LoginToken>({
+  return request({
     url: '/auth/refreshToken',
     method: 'post',
     data: {

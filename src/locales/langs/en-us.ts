@@ -341,7 +341,8 @@ const local: App.I18n.Schema = {
       common: {
         status: {
           enable: 'Enable',
-          disable: 'Disable'
+          disable: 'Disable',
+          logoff: 'Log Off'
         }
       },
       role: {

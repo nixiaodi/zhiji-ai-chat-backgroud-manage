@@ -528,6 +528,7 @@ declare namespace App {
             status: {
               enable: string;
               disable: string;
+              logoff: string;
             };
           };
           role: {
@@ -695,7 +696,7 @@ declare namespace App {
   /** Service namespace */
   namespace Service {
     /** Other baseURL key */
-    type OtherBaseURLKey = 'demo';
+    type OtherBaseURLKey = 'chat';
 
     interface ServiceConfigItem {
       /** The backend service base url */

@@ -21,8 +21,8 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   const token = ref(getToken());
 
   const userInfo: Api.Auth.UserInfo = reactive({
-    userId: '',
-    userName: '',
+    id: '',
+    name: '',
     roles: [],
     buttons: []
   });
@@ -31,7 +31,8 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   const isStaticSuper = computed(() => {
     const { VITE_AUTH_ROUTE_MODE, VITE_STATIC_SUPER_ROLE } = import.meta.env;
 
-    return VITE_AUTH_ROUTE_MODE === 'static' && userInfo.roles.includes(VITE_STATIC_SUPER_ROLE);
+    // return VITE_AUTH_ROUTE_MODE === 'static' && userInfo.roles.includes(VITE_STATIC_SUPER_ROLE);
+    return VITE_AUTH_ROUTE_MODE === 'static'
   });
 
   /** Is login */
@@ -63,41 +64,41 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   async function login(userName: string, password: string, redirect = true) {
     startLoading();
 
-    const { data: loginToken, error } = await fetchLogin(userName, password);
+    try {
+      
+    const res = await fetchLogin(userName, password);
+      if (res.code === 200) {
+        const pass = await loginByToken(res.data.accountToken);
 
-    if (!error) {
-      const pass = await loginByToken(loginToken);
+        if (pass) {
+          await routeStore.initAuthRoute();
 
-      if (pass) {
-        await routeStore.initAuthRoute();
+          await redirectFromLogin(redirect);
 
-        await redirectFromLogin(redirect);
-
-        if (routeStore.isInitAuthRoute) {
-          window.$notification?.success({
-            title: $t('page.login.common.loginSuccess'),
-            content: $t('page.login.common.welcomeBack', { userName: userInfo.userName }),
-            duration: 4500
-          });
+          if (routeStore.isInitAuthRoute) {
+            window.$notification?.success({
+              title: $t('page.login.common.loginSuccess'),
+              content: $t('page.login.common.welcomeBack', { userName: userInfo.name }),
+              duration: 4500
+            });
+          }
         }
+      } else {
+        resetStore();
       }
-    } else {
-      resetStore();
-    }
-
+    } catch(error){}
     endLoading();
   }
 
-  async function loginByToken(loginToken: Api.Auth.LoginToken) {
+  async function loginByToken(loginToken: string) {
     // 1. stored in the localStorage, the later requests need it in headers
-    localStg.set('token', loginToken.token);
-    localStg.set('refreshToken', loginToken.refreshToken);
+    localStg.set('token', loginToken);
 
     // 2. get user info
     const pass = await getUserInfo();
 
     if (pass) {
-      token.value = loginToken.token;
+      token.value = loginToken;
 
       return true;
     }
@@ -106,16 +107,19 @@ export const useAuthStore = defineStore(SetupStoreId.Auth, () => {
   }
 
   async function getUserInfo() {
-    const { data: info, error } = await fetchGetUserInfo();
+    try {
+      const res = await fetchGetUserInfo();
+      if (res.code === 200) {
+        // update store
+        Object.assign(userInfo, res.data);
+  
+        return true;
+      }
 
-    if (!error) {
-      // update store
-      Object.assign(userInfo, info);
-
-      return true;
+      return false;
+    } catch(error) {
+      return false
     }
-
-    return false;
   }
 
   async function initUserInfo() {
