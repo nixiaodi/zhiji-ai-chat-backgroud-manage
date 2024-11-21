@@ -1,14 +1,14 @@
-import { updateRule } from '@/services/ant-design-pro/api';
+import { updateRule } from '@/services/ai/api';
 import {
-  ProFormDateTimePicker,
-  ProFormRadio,
-  ProFormSelect,
-  ProFormText,
-  ProFormTextArea,
-  StepsForm,
+    ProFormDateTimePicker,
+    ProFormRadio,
+    ProFormSelect,
+    ProFormText,
+    ProFormTextArea,
+    StepsForm,
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl, useRequest } from '@umijs/max';
-import { message, Modal } from 'antd';
+import { Modal, message } from 'antd';
 import React, { cloneElement, useCallback, useState } from 'react';
 
 export type FormValueType = {

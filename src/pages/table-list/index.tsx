@@ -1,10 +1,10 @@
-import { removeRule, rule } from '@/services/ant-design-pro/api';
+import { removeRule, rule } from '@/services/ai/api';
 import type { ActionType, ProColumns, ProDescriptionsItemProps } from '@ant-design/pro-components';
 import {
-  FooterToolbar,
-  PageContainer,
-  ProDescriptions,
-  ProTable,
+    FooterToolbar,
+    PageContainer,
+    ProDescriptions,
+    ProTable,
 } from '@ant-design/pro-components';
 import { FormattedMessage, useIntl, useRequest } from '@umijs/max';
 import { Button, Drawer, Input, message } from 'antd';
