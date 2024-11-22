@@ -1,3 +1,4 @@
+import { TOKEN_KEY } from '@/common/storageKey';
 import { Footer } from '@/components';
 import { login } from '@/services/ai/api';
 import {
@@ -14,6 +15,7 @@ import {
 import { Helmet, SelectLang, useIntl, useModel } from '@umijs/max';
 import { Alert, message } from 'antd';
 import { createStyles } from 'antd-style';
+import ls from 'localstorage-slim';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import Settings from '../../../../config/defaultSettings';
@@ -115,12 +117,11 @@ const Login: React.FC = () => {
       // 登录
       const res = await login({ ...values });
 
+      console.log('handleSubmit',res)
+
       if (res.code === 200) {
-        const defaultLoginSuccessMessage = intl.formatMessage({
-          id: 'pages.login.success',
-          defaultMessage: '登录成功！',
-        });
-        message.success(defaultLoginSuccessMessage);
+        ls.set(TOKEN_KEY, res.data.accountToken);
+        message.success('登录成功');
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
         window.location.href = urlParams.get('redirect') || '/';

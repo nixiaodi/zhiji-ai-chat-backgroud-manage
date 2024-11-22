@@ -6,7 +6,7 @@ import { request } from '@umijs/max';
 export async function currentUser(options?: { [key: string]: any }) {
   return request<{
     data: API.CurrentUser;
-  }>('/api/v1/ai/chat/admin/detail', {
+  }>('/admin/adminByToken', {
     method: 'GET',
     ...(options || {}),
   });

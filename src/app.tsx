@@ -140,6 +140,8 @@ export const request: RequestConfig = {
     (url: string, options: any) => {
       const token = ls.get(TOKEN_KEY);
 
+      console.log('requestInterceptors', token)
+
       const extraHeader = {
         accountToken: token,
       };

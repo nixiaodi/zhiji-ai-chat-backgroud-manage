@@ -26,7 +26,7 @@ export default {
    * @name 详细的代理配置
    * @doc https://github.com/chimurai/http-proxy-middleware
    */
-  test: {
+  dev: {
     // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
     '/api': {
       target: 'http://47.108.237.42:3002/api',
