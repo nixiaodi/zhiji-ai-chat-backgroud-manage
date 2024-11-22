@@ -104,4 +104,46 @@ declare namespace API {
     description?: string;
     type?: NoticeIconItemType;
   };
+
+  type UserItem = {
+    createBy: string;
+    createTime: string;
+    email: string;
+    id: number;
+    imgUrl: string;
+    loginTime: string;
+    name: string;
+    phone: string;
+    source: string;
+    status: string;
+  };
+
+  type AjaxResult<T> = {
+    code: number;
+    data: T;
+    msg: string;
+  };
+
+  type UserListResult = AjaxResult<{
+    records: UserItem[];
+    total: number;
+  }>;
+
+  type PackageItem = {
+    createBy: string;
+    createTime: string;
+    description: string;
+    id: number;
+    level: 1 | 2;
+    name: string;
+    points: number;
+    price: number;
+    status: number;
+    type: 1 | 2 | 3 | 4;
+  };
+
+  type PackageListResult = AjaxResult<{
+    records: PackageItem[];
+    total: number;
+  }>;
 }

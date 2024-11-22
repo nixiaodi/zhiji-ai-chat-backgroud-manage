@@ -5,8 +5,15 @@ export default [
     routes: [
       { path: '/user/login', layout: false, component: './user/login' },
       { path: '/user', redirect: '/user/login' },
-      { icon: 'smile', path: '/user/register-result', component: './user/register-result' },
-      { icon: 'smile', path: '/user/register', component: './user/register' },
+    ],
+  },
+  {
+    icon: 'user',
+    path: '/packages',
+    name: '套餐管理',
+    routes: [
+      { path: '/packages', redirect: '/packages/list' },
+      { name: '套餐列表', path: '/packages/list', component: './packages/list' },
     ],
   },
   {
@@ -84,10 +91,10 @@ export default [
   {
     icon: 'user',
     path: '/account',
+    name: '用户管理',
     routes: [
-      { path: '/account', redirect: '/account/center' },
-      { icon: 'smile', path: '/account/center', component: './account/center' },
-      { icon: 'smile', path: '/account/settings', component: './account/settings' },
+      { path: '/account', redirect: '/account/user-list' },
+      { name: '用户列表', path: '/account/user-list', component: './account/list' },
     ],
   },
   { path: '/', redirect: '/dashboard/analysis' },

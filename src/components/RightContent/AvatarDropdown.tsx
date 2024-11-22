@@ -1,8 +1,9 @@
-import { outLogin } from '@/services/ai/api';
+import { TOKEN_KEY } from '@/common/storageKey';
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { history, useModel } from '@umijs/max';
 import { Spin } from 'antd';
 import { createStyles } from 'antd-style';
+import ls from 'localstorage-slim';
 import { stringify } from 'querystring';
 import React, { useCallback } from 'react';
 import { flushSync } from 'react-dom';
@@ -42,7 +43,6 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
    * 退出登录，并且将当前的 url 保存
    */
   const loginOut = async () => {
-    await outLogin();
     const { search, pathname } = window.location;
     const urlParams = new URL(window.location.href).searchParams;
     /** 此方法会跳转到 redirect 参数所在的位置 */
@@ -68,6 +68,7 @@ export const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu, childre
         flushSync(() => {
           setInitialState((s) => ({ ...s, currentUser: undefined }));
         });
+        ls.remove(TOKEN_KEY)
         loginOut();
         return;
       }
