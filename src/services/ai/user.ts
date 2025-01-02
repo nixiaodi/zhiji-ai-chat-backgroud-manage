@@ -7,7 +7,7 @@ export async function getUserList(params: {
   pageSize: number;
   phone: string;
 }) {
-  return request<API.UserListResult>('/manage/user/pageList', {
+  return request<API.UserListResult>('/user/pageList', {
     method: 'GET',
     params,
   });

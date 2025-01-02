@@ -7,7 +7,7 @@ export async function getPackagesList(params: {
   pageNumber: number;
   pageSize: number;
 }) {
-  return request<API.PackageListResult>('/manage/package/pageList', {
+  return request<API.PackageListResult>('/package/pageList', {
     method: 'GET',
     params,
   });

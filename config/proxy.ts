@@ -29,7 +29,7 @@ export default {
   dev: {
     // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
     '/api': {
-      target: 'http://47.108.237.42:3002/api',
+      target: 'http://47.108.237.42:3003/api',
       changeOrigin: true,
       pathRewrite: { '^/api': '' },
     },
