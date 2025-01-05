@@ -1,15 +1,16 @@
 import { getUserList } from '@/services/ai/user';
 import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
-import { ProTable, TableDropdown } from '@ant-design/pro-components';
+import { ProTable } from '@ant-design/pro-components';
 import { Button, Dropdown } from 'antd';
 import { useRef } from 'react';
 
 const columns: ProColumns<API.UserItem>[] = [
   {
+    title: '用户ID',
     dataIndex: 'id',
     hideInSearch: true,
-    width: 48,
+    width: 80,
   },
   {
     title: '用户名',
@@ -25,32 +26,6 @@ const columns: ProColumns<API.UserItem>[] = [
     dataIndex: 'email',
   },
   {
-    disable: true,
-    title: '状态',
-    dataIndex: 'state',
-    filters: true,
-    onFilter: true,
-    ellipsis: true,
-    valueType: 'select',
-    hideInSearch: true,
-    valueEnum: {
-      all: { text: '超长'.repeat(50) },
-      open: {
-        text: '未解决',
-        status: 'Error',
-      },
-      closed: {
-        text: '已解决',
-        status: 'Success',
-        disabled: true,
-      },
-      processing: {
-        text: '解决中',
-        status: 'Processing',
-      },
-    },
-  },
-  {
     title: '创建时间',
     dataIndex: 'createTime',
     valueType: 'date',
@@ -61,25 +36,9 @@ const columns: ProColumns<API.UserItem>[] = [
     valueType: 'option',
     key: 'option',
     render: (text, record, _, action) => [
-      <a
-        key="editable"
-        onClick={() => {
-          action?.startEditable?.(record.id);
-        }}
-      >
-        编辑
-      </a>,
-      <a href={record.url} target="_blank" rel="noopener noreferrer" key="view">
+      <a href='/' target="_blank" rel="noopener noreferrer" key="view">
         查看
       </a>,
-      <TableDropdown
-        key="actionGroup"
-        onSelect={() => action?.reload()}
-        menus={[
-          { key: 'copy', name: '复制' },
-          { key: 'delete', name: '删除' },
-        ]}
-      />,
     ],
   },
 ];
@@ -128,7 +87,7 @@ export default () => {
         pageSize: 10,
       }}
       dateFormatter="string"
-      headerTitle="高级表格"
+      headerTitle=""
       toolBarRender={() => [
         <Button
           key="button"
