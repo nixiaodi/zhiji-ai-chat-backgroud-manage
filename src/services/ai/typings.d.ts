@@ -106,16 +106,23 @@ declare namespace API {
   };
 
   type UserItem = {
+    accountId: string;
     createBy: string;
     createTime: string;
     email: string;
-    id: number;
+    hasPwd: boolean;
+    highLevel: boolean;
+    id: string;
     imgUrl: string;
     loginTime: string;
     name: string;
+    password: string;
     phone: string;
+    recommendCode: string;
     source: string;
     status: string;
+    updateBy: string;
+    updateTime: string;
   };
 
   type AjaxResult<T> = {

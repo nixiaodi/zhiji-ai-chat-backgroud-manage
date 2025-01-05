@@ -12,3 +12,11 @@ export async function getUserList(params: {
     params,
   });
 }
+
+// 获取用户信息
+export async function getUserInfo(params: { accountId: string }) {
+  return request<API.UserItem>('/user/detail', {
+    method: 'GET',
+    params,
+  });
+}

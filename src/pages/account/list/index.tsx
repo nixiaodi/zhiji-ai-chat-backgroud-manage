@@ -96,7 +96,7 @@ const columns: ProColumns<UserItem>[] = [
       <a
         key="view"
         onClick={() => {
-          history.push(`/account/detail/${record.id}`);
+          history.push(`/account/detail/${record.accountId}`);
         }}
       >
         查看
