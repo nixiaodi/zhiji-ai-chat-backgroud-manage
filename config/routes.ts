@@ -95,6 +95,12 @@ export default [
     routes: [
       { path: '/account', redirect: '/account/user-list' },
       { name: '用户列表', path: '/account/user-list', component: './account/list' },
+      { 
+        name: '用户详情', 
+        path: '/account/detail/:id', 
+        component: './account/detail',
+        hideInMenu: true 
+      },
     ],
   },
   { path: '/', redirect: '/dashboard/analysis' },

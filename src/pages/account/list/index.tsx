@@ -1,16 +1,40 @@
+import { history } from '@umijs/max';
 import { getUserList } from '@/services/ai/user';
-import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
 import type { ActionType, ProColumns } from '@ant-design/pro-components';
 import { ProTable } from '@ant-design/pro-components';
-import { Button, Dropdown } from 'antd';
 import { useRef } from 'react';
 
-const columns: ProColumns<API.UserItem>[] = [
+// 扩展 UserItem 类型定义
+type UserItem = {
+  accountId: string;
+  createBy: string;
+  createTime: string;
+  email: string;
+  id: string;
+  imgUrl: string;
+  loginTime: string;
+  name: string;
+  phone: string;
+  source: string;
+  status: string;
+  memberLevel?: string; // 会员等级
+  package?: string; // 购买套餐
+  remainingDays?: number; // 剩余天数
+  totalAmount?: number; // 累计下单金额
+  lastOrderTime?: string; // 最近下单时间
+};
+
+const columns: ProColumns<UserItem>[] = [
+  {
+    title: '序号',
+    dataIndex: 'index',
+    valueType: 'index',
+    width: 48,
+  },
   {
     title: '用户ID',
-    dataIndex: 'id',
-    hideInSearch: true,
-    width: 80,
+    dataIndex: 'accountId',
+    copyable: true,
   },
   {
     title: '用户名',
@@ -21,22 +45,60 @@ const columns: ProColumns<API.UserItem>[] = [
     dataIndex: 'phone',
   },
   {
-    title: '邮箱地址',
-    hideInSearch: true,
+    title: '邮箱',
     dataIndex: 'email',
   },
   {
-    title: '创建时间',
+    title: '会员等级',
+    dataIndex: 'memberLevel',
+    valueEnum: {
+      '自然会员': { text: '自然会员' },
+      '月会员': { text: '月会员' },
+      '季会员': { text: '季会员' },
+      '年会员': { text: '年会员' },
+    },
+  },
+  {
+    title: '购买套餐',
+    dataIndex: 'package',
+    valueEnum: {
+      '基础版': { text: '基础版' },
+      '专业版': { text: '专业版' },
+    },
+  },
+  {
+    title: '注册时间',
     dataIndex: 'createTime',
-    valueType: 'date',
+    valueType: 'dateTime',
+    hideInSearch: true,
+  },
+  {
+    title: '最近下单时间',
+    dataIndex: 'lastOrderTime',
+    valueType: 'dateTime',
+    hideInSearch: true,
+  },
+  {
+    title: '累计下单金额',
+    dataIndex: 'totalAmount',
+    hideInSearch: true,
+  },
+  {
+    title: '剩余天数',
+    dataIndex: 'remainingDays',
     hideInSearch: true,
   },
   {
     title: '操作',
     valueType: 'option',
     key: 'option',
-    render: (text, record, _, action) => [
-      <a href='/' target="_blank" rel="noopener noreferrer" key="view">
+    render: (_, record) => [
+      <a
+        key="view"
+        onClick={() => {
+          history.push(`/account/detail/${record.id}`);
+        }}
+      >
         查看
       </a>,
     ],
@@ -45,84 +107,41 @@ const columns: ProColumns<API.UserItem>[] = [
 
 export default () => {
   const actionRef = useRef<ActionType>();
+  
   return (
-    <ProTable<API.UserItem>
+    <ProTable<UserItem>
       columns={columns}
       actionRef={actionRef}
       cardBordered
-      request={async (params, sort, filter) => {
-        console.log(sort, filter);
-        const listRes = await getUserList(params);
+      request={async (params) => {
+        const { current, pageSize, ...rest } = params;
+        const listRes = await getUserList({
+          pageNumber: current || 1,
+          pageSize: pageSize || 10,
+          ...rest,
+        });
+        
         if(listRes.code === 200){
-          return Promise.resolve({
+          return {
             data: listRes.data.records,
             success: true,
             total: listRes.data.total,
-          })
+          };
         }
-      }}
-      editable={{
-        type: 'multiple',
-      }}
-      columnsState={{
-        persistenceKey: 'pro-table-singe-demos',
-        persistenceType: 'localStorage',
-        defaultValue: {
-          option: { fixed: 'right', disable: true },
-        },
-        onChange(value) {
-          console.log('value: ', value);
-        },
+        return {
+          data: [],
+          success: false,
+          total: 0,
+        };
       }}
       rowKey="id"
       search={{
         labelWidth: 'auto',
       }}
-      options={{
-        setting: {
-          listsHeight: 400,
-        },
-      }}
       pagination={{
         pageSize: 10,
       }}
       dateFormatter="string"
-      headerTitle=""
-      toolBarRender={() => [
-        <Button
-          key="button"
-          icon={<PlusOutlined />}
-          onClick={() => {
-            actionRef.current?.reload();
-          }}
-          type="primary"
-        >
-          新建
-        </Button>,
-        <Dropdown
-          key="menu"
-          menu={{
-            items: [
-              {
-                label: '1st item',
-                key: '1',
-              },
-              {
-                label: '2nd item',
-                key: '2',
-              },
-              {
-                label: '3rd item',
-                key: '3',
-              },
-            ],
-          }}
-        >
-          <Button>
-            <EllipsisOutlined />
-          </Button>
-        </Dropdown>,
-      ]}
     />
   );
 };
